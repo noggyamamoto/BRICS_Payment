@@ -25,7 +25,7 @@ public class Conta {
     private BigDecimal saldo = BigDecimal.ZERO;
 
     @Enumerated(EnumType.STRING)
-    private TipoConta;
+    private TipoConta tipo;
 
     public Long getId() {
         return id;
@@ -74,5 +74,4 @@ public class Conta {
     public void setTipo(TipoConta tipo) {
         this.tipo = tipo;
     }
-
 }
