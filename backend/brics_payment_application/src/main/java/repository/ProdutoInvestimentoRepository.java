@@ -1,5 +1,7 @@
 package repository;
 
-public class ProdutoInvestimentoRepository {
-    
+import model.ProdutoInvestimento;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface ProdutoInvestimentoRepository extends JpaRepository<ProdutoInvestimento, Long> {
 }
