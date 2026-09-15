@@ -14,6 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import java.time.LocalDate;
+import java.util.List;
+
 @Service
 public class ContaService {
 
@@ -22,6 +25,35 @@ public class ContaService {
 
     @Autowired
     private TransacaoRepository transacaoRepository;
+
+    /** Busca uma conta por ID. */
+    public Conta buscarConta(Long contaId) {
+        return contaRepository.findById(contaId)
+                .orElseThrow(() -> new EntityNotFoundException("Conta não encontrada"));
+    }
+    /**
+     * Retorna o extrato da conta, com filtros opcionais por período.
+     * Se inicio/fim forem null, retorna todas as transações.
+     */
+    public List<Transacao> extrato(Long contaId, LocalDate inicio, LocalDate fim) {
+        // Verifica se a conta existe (lança EntityNotFoundException se não)
+        buscarConta(contaId);
+
+        List<Transacao> todas = transacaoRepository.findByContaIdOrderByDataDesc(contaId);
+
+        if (inicio == null && fim == null) {
+            return todas;
+        }
+
+        return todas.stream()
+                .filter(t -> {
+                    LocalDate dataTx = t.getData().toLocalDate();
+                    if (inicio != null && dataTx.isBefore(inicio)) return false;
+                    if (fim != null && dataTx.isAfter(fim)) return false;
+                    return true;
+                })
+                .toList();
+    }
 
     @Transactional
     public Transacao depositar(Long contaId, BigDecimal valor) {

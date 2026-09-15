@@ -7,8 +7,9 @@ import model.TipoConta;
 import repository.ClienteRepository;
 import repository.ContaRepository;
 import exception.BusinessException;
+import exception.EntityNotFoundException;         
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder; 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,11 +19,9 @@ import java.util.UUID;
 @Service
 public class ClienteService {
 
-    @Autowired
-    private ClienteRepository clienteRepository;
-
-    @Autowired
-    private ContaRepository contaRepository;
+    @Autowired private ClienteRepository clienteRepository;
+    @Autowired private ContaRepository contaRepository;
+    @Autowired private PasswordEncoder passwordEncoder;   
 
     @Transactional
     public Cliente cadastrar(ClienteDTO dto) {
@@ -39,16 +38,16 @@ public class ClienteService {
         cliente.setDataNascimento(dto.getDataNascimento());
         cliente.setCep(dto.getCep());
         cliente.setEmail(dto.getEmail());
-        cliente.setSenha(new BCryptPasswordEncoder().encode(dto.getSenha()));
+        cliente.setSenha(passwordEncoder.encode(dto.getSenha())); 
         cliente.setDataCadastro(LocalDateTime.now());
 
         Cliente saved = clienteRepository.save(cliente);
 
-        // Cria conta padrão
         Conta conta = new Conta();
         conta.setCliente(saved);
         conta.setNumero(UUID.randomUUID().toString().substring(0, 8));
         conta.setAgencia("0001");
+        conta.setSaldo(java.math.BigDecimal.ZERO);  
         conta.setTipo(TipoConta.CORRENTE);
         contaRepository.save(conta);
 

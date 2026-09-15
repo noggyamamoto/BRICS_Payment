@@ -2,6 +2,7 @@ package dto;
 
 import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import jakarta.validation.constraints.DecimalMin;
 
 public class InvestimentoRequestDTO {
 

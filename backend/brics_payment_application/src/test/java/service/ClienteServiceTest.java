@@ -1,7 +1,6 @@
 package service;
 
 import dto.ClienteDTO;
-import model.Cliente;
 import repository.ClienteRepository;
 import repository.ContaRepository;
 import exception.BusinessException;
