@@ -391,7 +391,154 @@
 - Uma `Conta` pode ter vários `Investimentos`.
 - Um `ProdutoInvestimento` pode estar associado a vários `Investimentos`.
 
----
+
+## Diagramas de classes e entidade-relacionamento
+
+### Diagrama de classes
+
+```mermaid
+classDiagram
+    class Cliente {
+        - Long id
+        - String cpf «unique»
+        - String nome
+        - LocalDate dataNascimento
+        - String cep
+        - String email «unique»
+        - String senha «BCrypt»
+        - LocalDateTime dataCadastro
+        + cadastrar()
+        + autenticar()
+    }
+
+    class Conta {
+        - Long id
+        - String numero «UUID»
+        - String agencia
+        - BigDecimal saldo
+        - TipoConta tipo
+        + depositar(BigDecimal)
+        + sacar(BigDecimal)
+        + consultarSaldo()
+    }
+
+    class Transacao {
+        - Long id
+        - TipoTransacao tipo
+        - BigDecimal valor
+        - LocalDateTime data
+        - String descricao
+        + registrar()
+        + listar()
+    }
+
+    class ProdutoInvestimento {
+        - Long id
+        - String nome
+        - String descricao
+        - BigDecimal taxaRetorno
+        - Integer prazoMinimo
+        - BigDecimal valorMinimo
+        + consultar()
+    }
+
+    class Investimento {
+        - Long id
+        - BigDecimal valorAplicado
+        - LocalDate dataAplicacao
+        - StatusInvestimento status
+        + aplicar()
+        + resgatar()
+    }
+
+    class TipoConta {
+        <<enumeration>>
+        CORRENTE
+        POUPANCA
+        SALARIO
+    }
+
+    class TipoTransacao {
+        <<enumeration>>
+        DEPOSITO
+        SAQUE
+        TRANSFERENCIA
+        INVESTIMENTO
+        RESGATE
+    }
+
+    class StatusInvestimento {
+        <<enumeration>>
+        ATIVO
+        RESGATADO
+    }
+
+    Cliente "1" --> "0..*" Conta : possui
+    Conta "1" --> "0..*" Transacao : registra
+    Conta "1" --> "0..*" Investimento : aplica
+    ProdutoInvestimento "1" --> "0..*" Investimento : origem
+
+    Conta --> TipoConta
+    Transacao --> TipoTransacao
+    Investimento --> StatusInvestimento
+```
+
+### Diagrama entidade-relacionamento
+
+```mermaid
+erDiagram
+    CLIENTES ||--o{ CONTAS : "possui"
+    CONTAS ||--o{ TRANSACOES : "registra"
+    CONTAS ||--o{ INVESTIMENTOS : "aplica"
+    PRODUTOS_INVESTIMENTO ||--o{ INVESTIMENTOS : "referencia"
+
+    CLIENTES {
+        bigserial id PK
+        varchar(14) cpf UK "UNIQUE NOT NULL"
+        varchar(100) nome "NOT NULL"
+        date data_nascimento "NOT NULL"
+        varchar(10) cep "NOT NULL"
+        varchar(100) email UK "UNIQUE NOT NULL"
+        varchar(255) senha "BCrypt hash"
+        timestamp data_cadastro "DEFAULT CURRENT_TIMESTAMP"
+    }
+
+    CONTAS {
+        bigserial id PK
+        bigint id_cliente FK "NOT NULL → clientes(id)"
+        varchar(20) numero "UUID truncado"
+        varchar(10) agencia "DEFAULT '0001'"
+        decimal(15,2) saldo "DEFAULT 0.00"
+        varchar(20) tipo "CORRENTE | POUPANCA | SALARIO"
+    }
+
+    TRANSACOES {
+        bigserial id PK
+        bigint id_conta FK "NOT NULL → contas(id)"
+        varchar(20) tipo "DEPOSITO | SAQUE | TRANSFERENCIA | INVESTIMENTO | RESGATE"
+        decimal(15,2) valor "NOT NULL"
+        timestamp data "DEFAULT CURRENT_TIMESTAMP"
+        varchar(255) descricao
+    }
+
+    PRODUTOS_INVESTIMENTO {
+        bigserial id PK
+        varchar(100) nome "NOT NULL"
+        varchar(255) descricao
+        decimal(5,2) taxa_retorno "NOT NULL"
+        int prazo_minimo "NOT NULL"
+        decimal(15,2) valor_minimo "NOT NULL"
+    }
+
+    INVESTIMENTOS {
+        bigserial id PK
+        bigint id_conta FK "NOT NULL → contas(id)"
+        bigint id_produto FK "NOT NULL → produtos_investimento(id)"
+        decimal(15,2) valor_aplicado "NOT NULL"
+        date data_aplicacao "NOT NULL"
+        varchar(20) status "ATIVO | RESGATADO"
+    }
+```
 
 ## Frontend implementado
 
