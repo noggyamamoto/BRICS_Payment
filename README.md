@@ -153,7 +153,7 @@
 
 - O **Backend (Spring Boot)** valida o contrato recebido antes de processar a regra de negócio na camada de serviço.
 
-- As mensagens de erro da API são padronizadas em um formato JSON consistente, permitindo que o frontend exiba alertas claros ao usuário, como por exemplo: "Saldo insuficiente para esta operação").
+- As mensagens de erro da API são padronizadas em um formato JSON consistente, permitindo que o frontend exiba alertas claros ao usuário, como por exemplo: "Saldo insuficiente para esta operação".
 
 ---
 
@@ -230,7 +230,7 @@
 
 ### 5. Defesa de Decisões Técnicas
 
-> "Optamos pelo Spring Boot no backend devido à sua robustez, vasto ecossistema e facilidade de integração com Spring Security para autenticação e autorização, requisitos essenciais para um sistema bancário."
+> "Optamos pelo Spring Boot no backend devido à sua robustez, vasto ecossistema e facilidade de integração com Spring Security para autenticação e autorização, requisitos essenciais para um sistema financeiro."
 
 > "A escolha do PostgreSQL justifica-se pela necessidade de garantir consistência transacional (ACID) nas operações financeiras, evitando inconsistências como dupla dedução de saldo."
 
@@ -390,3 +390,85 @@
 - Uma `Conta` pode ter várias `Transacoes`.
 - Uma `Conta` pode ter vários `Investimentos`.
 - Um `ProdutoInvestimento` pode estar associado a vários `Investimentos`.
+
+---
+
+## Frontend implementado
+
+O frontend foi estruturado em **Angular 15 + TypeScript**, com navegação por rotas e telas separadas por domínio funcional. A interface cobre o fluxo principal do cliente, desde o acesso inicial até as operações bancárias e investimentos.
+
+### Principais funcionalidades disponíveis
+
+- **Autenticação**
+  - Tela de **login** com validação de e-mail e senha.
+  - Tela de **cadastro** de cliente com validações de CPF, CEP, e-mail e senha.
+  - Uso de serviços para armazenar token e dados do usuário após autenticação.
+
+- **Dashboard**
+  - Exibição do **saldo disponível**.
+  - Atalhos rápidos para **depósito**, **saque**, **extrato** e **investimentos**.
+  - Listagem de **últimas transações**.
+  - Visualização dos **investimentos ativos**.
+
+- **Operações bancárias**
+  - Tela de **depósito** com formulário reativo.
+  - Tela de **saque** com validação de valor mínimo.
+  - Tela de **extrato** com filtros por **data inicial** e **data final**.
+
+- **Investimentos**
+  - Tela de **listagem de produtos de investimento**.
+  - Tela de **compra de investimento** com preenchimento automático do valor mínimo do produto.
+
+### Rotas da aplicação
+
+- `/login` — autenticação do usuário.
+- `/cadastro` — criação de nova conta.
+- `/dashboard` — visão geral da conta.
+- `/deposito` — realização de depósito.
+- `/saque` — realização de saque.
+- `/extrato` — consulta do histórico de transações.
+- `/investimentos` — catálogo de produtos de investimento.
+- `/investimentos/comprar/:id` — compra de um investimento específico.
+
+### Organização do frontend
+
+```text
+frontend/
+├── src/
+│   └── app/
+│       ├── core/
+│       │   ├── guards/
+│       │   └── services/
+│       ├── features/
+│       │   ├── auth/
+│       │   │   ├── login/
+│       │   │   └── cadastro/
+│       │   ├── conta/
+│       │   │   ├── deposito/
+│       │   │   ├── saque/
+│       │   │   └── extrato/
+│       │   ├── dashboard/
+│       │   └── investimentos/
+│       │       ├── lista/
+│       │       └── comprar/
+│       └── shared/
+│           └── models/
+```
+
+### Integração com a API
+
+O frontend consome a API REST por meio de serviços Angular dedicados, seguindo a separação por responsabilidade:
+
+- `AuthService` para autenticação.
+- `ClienteService` para cadastro de cliente.
+- `ContaService` para depósito, saque e extrato.
+- `InvestimentoService` para produtos e compra de investimentos.
+- `TokenService` para persistência local de sessão.
+
+### Observações de implementação
+
+- As telas usam **Reactive Forms** para validação de entrada.
+- As rotas protegidas utilizam **AuthGuard**.
+- As mensagens de erro da API são tratadas para exibição amigável na interface.
+- Os valores monetários são formatados em **pt-BR** com **BRL**.
+
