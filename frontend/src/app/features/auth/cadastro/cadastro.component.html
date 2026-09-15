@@ -1,0 +1,78 @@
+<div class="auth-wrapper">
+  <div class="auth-hero">
+    <div class="hero-content">
+      <div class="hero-logo">BR</div>
+      <h1>Abra sua conta</h1>
+      <p>Em poucos segundos você tem acesso a uma conta digital completa e gratuita.</p>
+      <ul class="hero-features">
+        <li>✔️ Sem tarifas escondidas</li>
+        <li>✔️ Depósitos e saques ilimitados</li>
+        <li>✔️ Cartão virtual na hora</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="auth-panel">
+    <form [formGroup]="cadastroForm" (ngSubmit)="onSubmit()" class="auth-form">
+      <h2>Criar conta</h2>
+      <p class="auth-hint">Preencha seus dados para começar</p>
+
+      <div *ngIf="erro" class="alert alert-danger">{{ erro }}</div>
+      <div *ngIf="sucesso" class="alert alert-success">{{ sucesso }}</div>
+
+      <div class="form-group">
+        <label class="form-label">CPF</label>
+        <input class="form-control" formControlName="cpf" placeholder="000.000.000-00">
+        <span class="form-error" *ngIf="cadastroForm.get('cpf')?.invalid && cadastroForm.get('cpf')?.touched">
+          Formato: 000.000.000-00
+        </span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Nome completo</label>
+        <input class="form-control" formControlName="nome" placeholder="Seu nome">
+        <span class="form-error" *ngIf="cadastroForm.get('nome')?.invalid && cadastroForm.get('nome')?.touched">
+          Informe seu nome completo
+        </span>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Data de nascimento</label>
+          <input type="date" class="form-control" formControlName="dataNascimento">
+        </div>
+        <div class="form-group">
+          <label class="form-label">CEP</label>
+          <input class="form-control" formControlName="cep" placeholder="00000-000">
+          <span class="form-error" *ngIf="cadastroForm.get('cep')?.invalid && cadastroForm.get('cep')?.touched">
+            CEP inválido
+          </span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">E-mail</label>
+        <input type="email" class="form-control" formControlName="email" placeholder="voce@email.com">
+        <span class="form-error" *ngIf="cadastroForm.get('email')?.invalid && cadastroForm.get('email')?.touched">
+          Informe um e-mail válido
+        </span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Senha</label>
+        <input type="password" class="form-control" formControlName="senha" placeholder="Mínimo 6 caracteres">
+        <span class="form-error" *ngIf="cadastroForm.get('senha')?.invalid && cadastroForm.get('senha')?.touched">
+          Senha deve ter ao menos 6 caracteres
+        </span>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block" [disabled]="cadastroForm.invalid || carregando">
+        {{ carregando ? 'Cadastrando...' : 'Criar conta' }}
+      </button>
+
+      <p class="auth-footer">
+        Já tem conta? <a routerLink="/login">Entrar</a>
+      </p>
+    </form>
+  </div>
+</div>

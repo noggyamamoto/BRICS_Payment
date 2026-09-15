@@ -1,0 +1,31 @@
+<div class="card" *ngIf="produto">
+  <h2 class="card-title">Investir em {{ produto.nome }}</h2>
+  <p class="page-hint">{{ produto.descricao }}</p>
+
+  <div class="produto-info-box">
+    <div><span>Taxa de retorno</span><strong>{{ produto.taxaRetorno }}% a.m.</strong></div>
+    <div><span>Prazo mínimo</span><strong>{{ produto.prazoMinimo }} dias</strong></div>
+    <div><span>Aplicação mínima</span><strong>{{ formatBRL(produto.valorMinimo) }}</strong></div>
+  </div>
+
+  <div *ngIf="erro" class="alert alert-danger">{{ erro }}</div>
+  <div *ngIf="mensagem" class="alert alert-success">{{ mensagem }}</div>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label class="form-label">Valor a aplicar (R$)</label>
+      <input type="number" step="0.01" min="0.01"
+             class="form-control big-input" formControlName="valorAplicado">
+      <span class="form-error" *ngIf="form.get('valorAplicado')?.invalid && form.get('valorAplicado')?.touched">
+        Informe um valor válido
+      </span>
+    </div>
+
+    <div class="actions">
+      <button type="button" class="btn btn-secondary" (click)="router.navigate(['/investimentos'])">Voltar</button>
+      <button type="submit" class="btn btn-primary" [disabled]="form.invalid || carregando">
+        {{ carregando ? 'Processando...' : 'Confirmar investimento' }}
+      </button>
+    </div>
+  </form>
+</div>

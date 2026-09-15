@@ -1,0 +1,21 @@
+@import '../lista/investimento-lista.component.css';
+
+.produto-info-box {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  background: var(--gray-50);
+  padding: 16px;
+  border-radius: var(--radius-md);
+  margin-bottom: 20px;
+}
+.produto-info-box span { font-size: 12px; color: var(--gray-500); display: block; }
+.produto-info-box strong { color: var(--br-blue); font-size: 15px; }
+
+.big-input { font-size: 22px; font-weight: 700; text-align: center; padding: 18px; }
+.actions { display: flex; gap: 12px; justify-content: flex-end; }
+@media (max-width: 600px) {
+  .produto-info-box { grid-template-columns: 1fr; }
+  .actions { flex-direction: column; }
+  .actions .btn { width: 100%; }
+}

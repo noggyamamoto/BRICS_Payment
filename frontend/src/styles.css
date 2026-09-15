@@ -1,0 +1,216 @@
+/* ============================================================
+   BRICS PAYMENT — Tema global
+   Paleta baseada na bandeira do Brasil:
+   - Verde:  #009739 (principal)
+   - Amarelo:#FFDF00 (destaque)
+   - Azul:   #012169 (secundário / texto escuro)
+   - Branco: #FFFFFF
+   ============================================================ */
+
+:root {
+  /* Cores primárias */
+  --br-green:        #009739;
+  --br-green-dark:   #007a2e;
+  --br-green-light:  #e6f5ec;
+  --br-yellow:       #FFDF00;
+  --br-yellow-dark:  #E5C700;
+  --br-blue:         #012169;
+  --br-blue-dark:    #001845;
+  --br-blue-light:   #e6e9f5;
+  --br-white:        #FFFFFF;
+
+  /* Feedback */
+  --color-success:   #009739;
+  --color-warning:   #E5A100;
+  --color-danger:    #D32F2F;
+  --color-info:      #012169;
+
+  /* Neutros */
+  --gray-50:  #F8F9FB;
+  --gray-100: #EEF1F6;
+  --gray-200: #DCE1E9;
+  --gray-300: #B7BFCC;
+  --gray-500: #6B7280;
+  --gray-700: #374151;
+  --gray-900: #111827;
+
+  /* Layout */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-pill: 999px;
+
+  --shadow-sm: 0 1px 2px rgba(1, 33, 105, 0.06);
+  --shadow-md: 0 4px 14px rgba(1, 33, 105, 0.08);
+  --shadow-lg: 0 10px 30px rgba(1, 33, 105, 0.12);
+
+  --transition: all .2s ease;
+
+  /* Sidebar escura (padrão dos bancos digitais) */
+  --sidebar-bg: linear-gradient(180deg, #001845 0%, #012169 100%);
+  --sidebar-fg: #E6E9F5;
+}
+
+/* ---------------- Reset ---------------- */
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--gray-50);
+  color: var(--gray-900);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--br-blue); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ---------------- Tipografia ---------------- */
+h1, h2, h3, h4 { margin: 0 0 8px; font-weight: 700; color: var(--br-blue); }
+h1 { font-size: 28px; }
+h2 { font-size: 22px; }
+h3 { font-size: 18px; }
+p  { margin: 0 0 8px; }
+
+/* ---------------- Botões ---------------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 22px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: var(--radius-pill);
+  border: none;
+  cursor: pointer;
+  transition: var(--transition);
+  text-decoration: none;
+  font-family: inherit;
+}
+
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+
+/* Botão principal (Verde Brasil) */
+.btn-primary {
+  background: linear-gradient(135deg, var(--br-green) 0%, var(--br-green-dark) 100%);
+  color: var(--br-white);
+  box-shadow: 0 4px 14px rgba(0, 151, 57, 0.28);
+}
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(0, 151, 57, 0.4);
+}
+
+/* Botão de destaque (Amarelo Brasil) */
+.btn-accent {
+  background: var(--br-yellow);
+  color: var(--br-blue);
+  box-shadow: 0 4px 14px rgba(255, 223, 0, 0.35);
+}
+.btn-accent:hover:not(:disabled) { background: var(--br-yellow-dark); }
+
+/* Secundário (outline azul) */
+.btn-secondary {
+  background: transparent;
+  color: var(--br-blue);
+  border: 1.5px solid var(--br-blue);
+}
+.btn-secondary:hover:not(:disabled) { background: var(--br-blue-light); }
+
+/* Danger */
+.btn-danger { background: var(--color-danger); color: #fff; }
+
+/* Bloco */
+.btn-block { width: 100%; }
+
+/* ---------------- Formulários ---------------- */
+.form-group { margin-bottom: 18px; }
+.form-label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--gray-700);
+  text-transform: uppercase;
+  letter-spacing: .4px;
+}
+.form-control {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 15px;
+  font-family: inherit;
+  background: var(--gray-50);
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  transition: var(--transition);
+  color: var(--gray-900);
+}
+.form-control:focus {
+  outline: none;
+  border-color: var(--br-green);
+  background: var(--br-white);
+  box-shadow: 0 0 0 3px rgba(0, 151, 57, 0.15);
+}
+.form-control.is-invalid {
+  border-color: var(--color-danger);
+  box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.12);
+}
+.form-error {
+  display: block;
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--color-danger);
+  font-weight: 500;
+}
+
+/* ---------------- Cards ---------------- */
+.card {
+  background: var(--br-white);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-md);
+}
+.card-title { font-size: 18px; color: var(--br-blue); margin-bottom: 16px; }
+
+/* ---------------- Alertas ---------------- */
+.alert {
+  padding: 14px 18px;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.alert-success { background: var(--br-green-light); color: var(--br-green-dark); border-left: 4px solid var(--br-green); }
+.alert-danger  { background: #FDEAEA; color: #B71C1C; border-left: 4px solid var(--color-danger); }
+.alert-info    { background: var(--br-blue-light); color: var(--br-blue); border-left: 4px solid var(--br-blue); }
+.alert-warning { background: #FFF7E0; color: #8B5E00; border-left: 4px solid var(--br-yellow); }
+
+/* ---------------- Utilitários ---------------- */
+.text-center { text-align: center; }
+.text-right  { text-align: right; }
+.mt-1 { margin-top: 8px; } .mt-2 { margin-top: 16px; } .mt-3 { margin-top: 24px; }
+.mb-1 { margin-bottom: 8px; } .mb-2 { margin-bottom: 16px; } .mb-3 { margin-bottom: 24px; }
+.d-flex { display: flex; } .gap-2 { gap: 16px; }
+.justify-between { justify-content: space-between; }
+.align-center { align-items: center; }
+
+/* ============================================================
+   Layout principal autenticado (Sidebar + Conteúdo)
+   ============================================================ */
+.app-shell { display: flex; min-height: 100vh; }
+.app-main { flex: 1; padding: 32px; overflow-x: hidden; }
+@media (max-width: 900px) {
+  .app-shell { flex-direction: column; }
+  .app-main { padding: 20px 16px; }
+}
+
+/* Scrollbar sutil */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: var(--gray-200); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--gray-300); }

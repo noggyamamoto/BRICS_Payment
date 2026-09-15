@@ -1,0 +1,8 @@
+/node_modules
+/dist
+/.angular
+/.vscode/*
+!.vscode/settings.json
+/src/environments/environment.local.ts
+*.log
+.DS_Store

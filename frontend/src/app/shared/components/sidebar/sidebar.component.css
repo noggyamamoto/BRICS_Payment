@@ -1,0 +1,73 @@
+.sidebar {
+  width: 260px;
+  background: var(--sidebar-bg);
+  color: var(--sidebar-fg);
+  display: flex;
+  flex-direction: column;
+  padding: 24px 18px;
+  min-height: 100vh;
+  position: sticky;
+  top: 0;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 32px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(255,255,255,.1);
+}
+
+.brand-mark {
+  width: 42px; height: 42px;
+  border-radius: 12px;
+  background: var(--br-yellow);
+  color: var(--br-blue);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 16px;
+  box-shadow: 0 4px 14px rgba(255, 223, 0, 0.35);
+}
+
+.brand-text { display: flex; flex-direction: column; line-height: 1.1; }
+.brand-text strong { color: #fff; font-size: 15px; }
+.brand-text span   { color: var(--br-yellow); font-size: 12px; font-weight: 600; letter-spacing: 1px; }
+
+.menu { display: flex; flex-direction: column; gap: 6px; flex: 1; }
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  color: var(--sidebar-fg);
+  cursor: pointer;
+  font-weight: 500;
+  transition: var(--transition);
+  user-select: none;
+}
+.menu-item:hover { background: rgba(255,255,255,.08); text-decoration: none; }
+.menu-item.active {
+  background: linear-gradient(90deg, var(--br-green) 0%, var(--br-green-dark) 100%);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(0, 151, 57, 0.35);
+}
+.menu-icon { font-size: 18px; width: 24px; text-align: center; }
+.menu-label { font-size: 14px; }
+
+.sidebar-footer {
+  border-top: 1px solid rgba(255,255,255,.1);
+  padding-top: 16px;
+  text-align: center;
+  font-size: 11px;
+  opacity: .7;
+}
+
+@media (max-width: 900px) {
+  .sidebar { width: 100%; min-height: auto; padding: 16px; flex-direction: row; align-items: center; }
+  .brand { margin: 0 16px 0 0; padding: 0; border: none; }
+  .menu { flex-direction: row; overflow-x: auto; gap: 4px; }
+  .menu-label { display: none; }
+  .sidebar-footer { display: none; }
+}

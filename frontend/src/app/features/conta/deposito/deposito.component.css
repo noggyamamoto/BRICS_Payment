@@ -1,0 +1,4 @@
+.page-container { max-width: 520px; margin: 0 auto; }
+.page-card { padding: 32px; }
+.page-hint { color: var(--gray-500); font-size: 14px; margin-bottom: 20px; }
+.big-input { font-size: 22px; font-weight: 700; text-align: center; padding: 18px; }

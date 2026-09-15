@@ -1,0 +1,73 @@
+<div *ngIf="carregando" class="alert alert-info">Carregando dados da conta...</div>
+<div *ngIf="erro" class="alert alert-danger">{{ erro }}</div>
+
+<ng-container *ngIf="!carregando && conta">
+  <!-- Card de saldo em destaque (Verde Brasil) -->
+  <section class="saldo-card">
+    <div>
+      <span class="saldo-label">Saldo disponível</span>
+      <h2 class="saldo-value">{{ formatBRL(conta.saldo) }}</h2>
+      <span class="saldo-info">Agência {{ conta.agencia }} • Conta {{ conta.numero }}</span>
+    </div>
+    <div class="saldo-actions">
+      <button class="btn btn-accent" (click)="ir('/deposito')">Depositar</button>
+      <button class="btn btn-secondary" (click)="ir('/saque')">Sacar</button>
+    </div>
+  </section>
+
+  <!-- Atalhos rápidos -->
+  <section class="atalhos">
+    <div class="atalho" (click)="ir('/extrato')">
+      <span class="atalho-icon">📄</span>
+      <span>Extrato</span>
+    </div>
+    <div class="atalho" (click)="ir('/investimentos')">
+      <span class="atalho-icon">📈</span>
+      <span>Investir</span>
+    </div>
+    <div class="atalho" (click)="ir('/deposito')">
+      <span class="atalho-icon">💰</span>
+      <span>Depositar</span>
+    </div>
+    <div class="atalho" (click)="ir('/saque')">
+      <span class="atalho-icon">🏧</span>
+      <span>Sacar</span>
+    </div>
+  </section>
+
+  <!-- Grid inferior: últimas transações + investimentos -->
+  <div class="grid-2">
+    <div class="card">
+      <h3 class="card-title">Últimas transações</h3>
+      <div *ngIf="ultimasTransacoes.length === 0" class="empty">Nenhuma transação ainda.</div>
+      <ul class="tx-list">
+        <li *ngFor="let t of ultimasTransacoes" class="tx-item">
+          <div class="tx-icon" [ngClass]="t.tipo === 'DEPOSITO' ? 'in' : 'out'">
+            {{ t.tipo === 'DEPOSITO' ? '↓' : '↑' }}
+          </div>
+          <div class="tx-info">
+            <strong>{{ t.descricao || t.tipo }}</strong>
+            <span>{{ formatDate(t.data) }}</span>
+          </div>
+          <span class="tx-valor" [ngClass]="t.tipo === 'DEPOSITO' ? 'positivo' : 'negativo'">
+            {{ t.tipo === 'DEPOSITO' ? '+' : '-' }} {{ formatBRL(t.valor) }}
+          </span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">Meus investimentos</h3>
+      <div *ngIf="investimentos.length === 0" class="empty">Você ainda não investe.</div>
+      <ul class="inv-list">
+        <li *ngFor="let i of investimentos" class="inv-item">
+          <div>
+            <strong>Produto #{{ i.produtoId }}</strong>
+            <span>{{ formatDate(i.dataAplicacao) }} • {{ i.status }}</span>
+          </div>
+          <span class="inv-valor">{{ formatBRL(i.valorAplicado) }}</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</ng-container>

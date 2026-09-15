@@ -1,0 +1,51 @@
+<div class="auth-wrapper">
+  <!-- Painel lateral (branding) -->
+  <div class="auth-hero">
+    <div class="hero-content">
+      <div class="hero-logo">BR</div>
+      <h1>BRICS Payment</h1>
+      <p>Seu banco digital com a força e a confiança do Brasil.</p>
+      <ul class="hero-features">
+        <li>✔️ Conta digital gratuita</li>
+        <li>✔️ Investimentos a partir de R$ 100</li>
+        <li>✔️ Saques e depósitos em segundos</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Formulário de login -->
+  <div class="auth-panel">
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="auth-form">
+      <h2>Entrar na sua conta</h2>
+      <p class="auth-hint">Informe suas credenciais para continuar</p>
+
+      <div *ngIf="erro" class="alert alert-danger">{{ erro }}</div>
+
+      <div class="form-group">
+        <label class="form-label">E-mail</label>
+        <input type="email" class="form-control" formControlName="email" placeholder="voce@email.com">
+        <span class="form-error"
+              *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+          Informe um e-mail válido
+        </span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Senha</label>
+        <input type="password" class="form-control" formControlName="senha" placeholder="••••••">
+        <span class="form-error"
+              *ngIf="loginForm.get('senha')?.invalid && loginForm.get('senha')?.touched">
+          Senha deve ter ao menos 6 caracteres
+        </span>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block" [disabled]="loginForm.invalid || carregando">
+        {{ carregando ? 'Entrando...' : 'Entrar' }}
+      </button>
+
+      <p class="auth-footer">
+        Ainda não tem conta? <a routerLink="/cadastro">Cadastre-se</a>
+      </p>
+    </form>
+  </div>
+</div>

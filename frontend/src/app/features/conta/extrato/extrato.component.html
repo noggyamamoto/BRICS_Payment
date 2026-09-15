@@ -1,0 +1,49 @@
+<div class="card">
+  <h2 class="card-title">📄 Extrato</h2>
+  <p class="page-hint">Consulte suas movimentações por período.</p>
+
+  <!-- Filtros -->
+  <form [formGroup]="form" (ngSubmit)="buscar()" class="filtros">
+    <div class="form-group">
+      <label class="form-label">Data inicial</label>
+      <input type="date" class="form-control" formControlName="inicio">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Data final</label>
+      <input type="date" class="form-control" formControlName="fim">
+    </div>
+    <button type="submit" class="btn btn-primary">Filtrar</button>
+  </form>
+
+  <div *ngIf="carregando" class="alert alert-info">Carregando...</div>
+  <div *ngIf="erro" class="alert alert-danger">{{ erro }}</div>
+
+  <table class="tx-table" *ngIf="!carregando && transacoes.length > 0">
+    <thead>
+      <tr>
+        <th>Data</th>
+        <th>Tipo</th>
+        <th>Descrição</th>
+        <th class="text-right">Valor</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let t of transacoes">
+        <td>{{ formatDate(t.data) }}</td>
+        <td>
+          <span class="badge" [ngClass]="t.tipo === 'DEPOSITO' ? 'badge-in' : 'badge-out'">
+            {{ t.tipo }}
+          </span>
+        </td>
+        <td>{{ t.descricao || '-' }}</td>
+        <td class="text-right" [ngClass]="t.tipo === 'DEPOSITO' ? 'positivo' : 'negativo'">
+          {{ t.tipo === 'DEPOSITO' ? '+' : '-' }} {{ formatBRL(t.valor) }}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="!carregando && transacoes.length === 0" class="empty">
+    Nenhuma transação encontrada para o período.
+  </div>
+</div>

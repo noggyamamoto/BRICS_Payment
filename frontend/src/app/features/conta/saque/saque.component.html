@@ -1,0 +1,24 @@
+<div class="page-container">
+  <div class="card page-card">
+    <h2 class="card-title">🏧 Realizar Saque</h2>
+    <p class="page-hint">Informe o valor que deseja sacar da sua conta.</p>
+
+    <div *ngIf="erro" class="alert alert-danger">{{ erro }}</div>
+    <div *ngIf="mensagem" class="alert alert-success">{{ mensagem }}</div>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label class="form-label">Valor (R$)</label>
+        <input type="number" step="0.01" min="0.01"
+               class="form-control big-input" formControlName="valor" placeholder="0,00">
+        <span class="form-error" *ngIf="form.get('valor')?.invalid && form.get('valor')?.touched">
+          Valor deve ser maior que zero
+        </span>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block" [disabled]="form.invalid || carregando">
+        {{ carregando ? 'Processando...' : 'Sacar' }}
+      </button>
+    </form>
+  </div>
+</div>

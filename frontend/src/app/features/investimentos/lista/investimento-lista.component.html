@@ -1,0 +1,26 @@
+<div class="card">
+  <h2 class="card-title">📈 Investimentos disponíveis</h2>
+  <p class="page-hint">Escolha um produto e comece a render seu dinheiro.</p>
+
+  <div *ngIf="carregando" class="alert alert-info">Carregando produtos...</div>
+  <div *ngIf="erro" class="alert alert-danger">{{ erro }}</div>
+
+  <div class="produtos-grid">
+    <div class="produto-card" *ngFor="let p of produtos">
+      <div class="produto-header">
+        <h3>{{ p.nome }}</h3>
+        <span class="taxa">{{ p.taxaRetorno }}% a.m.</span>
+      </div>
+      <p class="produto-desc">{{ p.descricao }}</p>
+      <div class="produto-info">
+        <span><strong>Prazo mínimo:</strong> {{ p.prazoMinimo }} dias</span>
+        <span><strong>Aplicação mínima:</strong> {{ formatBRL(p.valorMinimo) }}</span>
+      </div>
+      <button class="btn btn-primary btn-block" (click)="comprar(p.id)">Investir</button>
+    </div>
+  </div>
+
+  <div *ngIf="!carregando && produtos.length === 0" class="empty">
+    Nenhum produto disponível no momento.
+  </div>
+</div>

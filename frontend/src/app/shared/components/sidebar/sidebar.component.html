@@ -1,0 +1,27 @@
+<!--
+  Sidebar escura (padrão banco digital) com branding BRICS Payment.
+  Cores da bandeira do Brasil: verde no destaque, amarelo no logo.
+-->
+<aside class="sidebar">
+  <div class="brand">
+    <div class="brand-mark">BR</div>
+    <div class="brand-text">
+      <strong>BRICS</strong>
+      <span>Payment</span>
+    </div>
+  </div>
+
+  <nav class="menu">
+    <a *ngFor="let item of menu"
+       class="menu-item"
+       [class.active]="isActive(item.route)"
+       (click)="go(item.route)">
+      <span class="menu-icon">{{ item.icon }}</span>
+      <span class="menu-label">{{ item.label }}</span>
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <small>© 2026 BRICS Payment</small>
+  </div>
+</aside>
