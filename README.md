@@ -197,7 +197,7 @@
 │   │   │   │   ├── dto/
 │   │   │   │   ├── config/
 │   │   │   │   └── exception/
-│   │   │   └── resources/
+│   │   │   └��─ resources/
 │   │   │       ├── application.properties
 │   │   │       └── application-dev.properties
 │   │   └── test/
@@ -472,3 +472,34 @@ O frontend consome a API REST por meio de serviços Angular dedicados, seguindo 
 - As mensagens de erro da API são tratadas para exibição amigável na interface.
 - Os valores monetários são formatados em **pt-BR** com **BRL**.
 
+## Como rodar o frontend localmente
+
+1. Acesse a pasta do frontend:
+
+```bash
+cd frontend
+```
+
+2. Instale as dependências:
+
+```bash
+npm install
+```
+
+3. Inicie o servidor de desenvolvimento do Angular:
+
+```bash
+npm start
+```
+
+4. Abra o navegador em:
+
+```bash
+http://localhost:4200
+```
+
+### Pré-requisitos
+
+- Node.js e npm instalados.
+- Backend da aplicação em execução para que as telas consumam a API corretamente.
+- Se necessário, ajuste os endpoints em `src/environments/environment.ts` e `src/environments/environment.prod.ts`.
