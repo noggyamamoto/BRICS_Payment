@@ -4,7 +4,7 @@
 
 #### 1. Mapeamento de Usuários
 
-- **Cliente (Usuário Comum)**: Pode realizar cadastro, login, saques, depósitos, consultar extrato e adquirir investimentos.
+- **Cliente (Usuário Comum)**: Pode realizar cadastro, login, saques, depósitos, consultar extrato, listar produtos de investimento, comprar investimentos e consultar os investimentos vinculados à sua conta.
 
 - **Administrador (Admin)**: Responsável pela gestão de usuários, visualização de relatórios gerais e monitoramento de transações.
 
@@ -12,13 +12,13 @@
 
 - **Frontend**: Interface web responsiva para apresentação visual de todo o sistema.
 
-- **Backend & API REST**: Servidor para processamento das regras de negócio e exposição de endpoints para cadastros, saques, extratos e depósitos.
+- **Backend & API REST**: Servidor para processamento das regras de negócio e exposição de endpoints para autenticação, cadastro, conta, extrato, depósitos, saques e investimentos.
 
-- **Persistência de Dados**: Banco de dados relacional para armazenar informações de clientes, contas, transações e investimentos.
+- **Persistência de Dados**: Banco de dados relacional para armazenar informações de clientes, contas, transações, produtos de investimento e investimentos.
 
-- **Validação**: Implementação de regras para garantir o controle de limites de saque, insuficiência de saldo e produtos contratados.
+- **Validação**: Implementação de regras para garantir o controle de limites de saque, insuficiência de saldo, unicidade de CPF/e-mail, valores mínimos e produtos contratados.
 
-- **Configuração por Ambiente**: Uso de variáveis de ambiente, como .env no frontend e application.properties no backend, para separar configurações de desenvolvimento e produção.
+- **Configuração por Ambiente**: Uso de variáveis de ambiente, como `.env` no frontend e `application.properties` no backend, para separar configurações de desenvolvimento e produção.
 
 #### 3. Backlog Inicial
 
@@ -30,9 +30,9 @@
 
 - Extrato: Histórico de transações com filtros por período.
 
-- Investimentos: Compra e resgate de produtos de investimento.
+- Investimentos: Consulta de produtos, compra e resgate de produtos de investimento.
 
-- Testes de Integração: Validar regras de negócio (ex: não permitir saque se saldo insuficiente).
+- Testes de Integração: Validar regras de negócio (ex.: não permitir saque se saldo insuficiente).
 
 ### Prototipagem e Contratos
 
@@ -40,7 +40,7 @@
 
 - **Tela de Cadastro**: Campos de CPF, nome, data de nascimento, CEP, e-mail e senha. Ao submeter, o frontend dispara a requisição à API.
 
-- **Tela de Login**: Campos de CPF e senha. Ao submeter, o frontend dispara a requisição à APÍ.
+- **Tela de Login**: Campos de e-mail e senha. Ao submeter, o frontend dispara a requisição à API.
 
 - **Tela de Dashboard**: Exibe saldo, últimas transações e atalhos para depósito, saque e investimentos.
 
@@ -50,7 +50,7 @@
 
 #### 2. Contratos da API (Documentação Técnica)
 
-#### Endpoint: Cadastro de Cliente
+##### Endpoint: Cadastro de Cliente
 
 - **Rota**: `POST /api/v1/clientes`
 - **Corpo da Requisição (JSON)**:
@@ -64,22 +64,59 @@
   "senha": "senha123"
 }
 ```
-- **Resposta de Erro (400 Bad Request):** Caso CPF ou e-mail já estejam cadastrados, ou dados inválidos.
+- **Resposta de Sucesso (201 Created)**: Cliente criado com conta associada e saldo inicial zero.
+- **Resposta de Erro (400 Bad Request)**: Caso CPF ou e-mail já estejam cadastrados, ou dados inválidos.
 
-#### Endpoint: Realizar Depósito
+##### Endpoint: Login
+
+- **Rota**: `POST /api/v1/auth/login`
+- **Corpo da Requisição (JSON)**:
+```json
+{
+  "email": "joao@email.com",
+  "senha": "senha123"
+}
+```
+- **Resposta de Sucesso (200 OK)**:
+```json
+{
+  "token": "jwt-token",
+  "clienteId": 1,
+  "contaId": 101,
+  "nome": "João Silva",
+  "email": "joao@email.com"
+}
+```
+- **Resposta de Erro (401 Unauthorized)**: Credenciais inválidas.
+
+##### Endpoint: Consultar Conta
+
+- **Rota**: `GET /api/v1/contas/{contaId}`
+- **Resposta de Sucesso (200 OK)**:
+```json
+{
+  "id": 101,
+  "numero": "123456-7",
+  "agencia": "0001",
+  "saldo": 1500.00
+}
+```
+
+##### Endpoint: Consultar Extrato
+
+- **Rota**: `GET /api/v1/contas/{contaId}/extrato?inicio=YYYY-MM-DD&fim=YYYY-MM-DD`
+- **Resposta de Sucesso (200 OK)**: Lista de transações da conta filtradas por período.
+
+##### Endpoint: Realizar Depósito
 
 - **Rota**: `POST /api/v1/contas/{contaId}/deposito`
-
 - **Corpo da Requisição (JSON)**:
-
 ```json
 {
   "valor": 100.00
 }
 ```
-
 - **Resposta de Sucesso (200 OK)**:
-
 ```json
 {
   "id": 1,
@@ -89,23 +126,18 @@
   "data": "2026-08-18T10:00:00"
 }
 ```
-
 - **Resposta de Erro (400 Bad Request)**: Caso o valor seja negativo ou zero.
 
 ##### Endpoint: Realizar Saque
 
 - **Rota**: `POST /api/v1/contas/{contaId}/saque`
-
 - **Corpo da Requisição (JSON)**:
-
 ```json
 {
   "valor": 50.00
 }
 ```
-
 - **Resposta de Sucesso (200 OK)**:
-
 ```json
 {
   "id": 2,
@@ -115,15 +147,22 @@
   "data": "2026-08-18T10:05:00"
 }
 ```
-
 - **Resposta de Erro (400 Bad Request)**: Caso o saldo seja insuficiente.
+
+##### Endpoint: Listar Produtos de Investimento
+
+- **Rota**: `GET /api/v1/investimentos/produtos`
+- **Resposta de Sucesso (200 OK)**: Lista dos produtos de investimento disponíveis.
+
+##### Endpoint: Listar Investimentos por Conta
+
+- **Rota**: `GET /api/v1/investimentos/conta/{contaId}`
+- **Resposta de Sucesso (200 OK)**: Lista dos investimentos vinculados à conta informada.
 
 ##### Endpoint: Comprar Investimento
 
 - **Rota**: `POST /api/v1/investimentos`
-
 - **Corpo da Requisição (JSON)**:
-
 ```json
 {
   "contaId": 101,
@@ -131,9 +170,7 @@
   "valorAplicado": 1000.00
 }
 ```
-
 - **Resposta de Sucesso (201 Created)**:
-
 ```json
 {
   "id": 10,
@@ -144,7 +181,6 @@
   "status": "ATIVO"
 }
 ```
-
 - **Resposta de Erro (400 Bad Request)**: Caso o saldo seja insuficiente ou o produto não esteja disponível.
 
 #### 3. Documentação de Fluxo e Comunicação
@@ -197,7 +233,7 @@
 │   │   │   │   ├── dto/
 │   │   │   │   ├── config/
 │   │   │   │   └── exception/
-│   │   │   └��─ resources/
+│   │   │   └── resources/
 │   │   │       ├── application.properties
 │   │   │       └── application-dev.properties
 │   │   └── test/
@@ -224,9 +260,15 @@
 
 - **Camada de Dados**: Uso do Hibernate (via Spring Data JPA) para mapeamento objeto-relacional.
 
+- **Modelo de Persistência**: As entidades principais são `Cliente`, `Conta`, `Transacao`, `ProdutoInvestimento` e `Investimento`, com relacionamentos entre cliente-conta, conta-transação e conta-investimento.
+
 - **Migrations**: Utilização do Flyway ou Liquibase para versionamento do esquema do banco de dados.
 
-- **Variáveis de Ambiente**: A arquitetura prevê o uso de perfis de configuração (Spring Profiles) e arquivos .env para gerenciar credenciais e URLs, separando desenvolvimento, teste e produção.
+- **Banco de Dados**: PostgreSQL como banco relacional principal, com chaves únicas para `cpf` e `email` e integridade referencial entre as tabelas.
+
+- **Regras de Persistência**: Operações financeiras devem ser registradas em transações atômicas para garantir consistência de saldo e histórico.
+
+- **Variáveis de Ambiente**: A arquitetura prevê o uso de perfis de configuração (Spring Profiles) e arquivos `.env` para gerenciar credenciais e URLs, separando desenvolvimento, teste e produção.
 
 ### 5. Defesa de Decisões Técnicas
 
@@ -244,16 +286,22 @@
 
 - **RF01 - Cadastro de Cliente**: O sistema deve permitir o cadastro de clientes com CPF, nome, data de nascimento, CEP, e-mail e senha. CPF e e-mail devem ser únicos.
 
-- **RF02 - Depósito**: O sistema deve permitir que o cliente deposite valores em sua conta, atualizando o saldo e registrando a transação.
+- **RF02 - Autenticação**: O sistema deve autenticar usuários via JWT, diferenciando perfis (cliente e admin).
 
-- **RF03 - Saque**: O sistema deve permitir o saque, desde que o saldo seja suficiente, atualizando o saldo e registrando a transação.
+- **RF03 - Consulta de Conta**: O sistema deve permitir consultar saldo, número e agência da conta do cliente.
 
-- **RF04 - Extrato**: O sistema deve listar as transações de um cliente com filtros por data e tipo.
+- **RF04 - Depósito**: O sistema deve permitir que o cliente deposite valores em sua conta, atualizando o saldo e registrando a transação.
 
-- **RF05 - Compra de Investimento**: O sistema deve permitir a compra de produtos de investimento, debitando o valor da conta e registrando a aplicação.
+- **RF05 - Saque**: O sistema deve permitir o saque, desde que o saldo seja suficiente, atualizando o saldo e registrando a transação.
+
+- **RF06 - Extrato**: O sistema deve listar as transações de um cliente com filtros por data e tipo.
+
+- **RF07 - Listagem de Produtos de Investimento**: O sistema deve permitir listar produtos de investimento disponíveis.
+
+- **RF08 - Listagem de Investimentos da Conta**: O sistema deve listar os investimentos vinculados a uma conta.
+
+- **RF09 - Compra de Investimento**: O sistema deve permitir a compra de produtos de investimento, debitando o valor da conta e registrando a aplicação.
   - *Regra de Negócio*: O cliente deve ter saldo suficiente e o produto deve estar disponível.
-
-- **RF06 - Autenticação**: O sistema deve autenticar usuários via JWT, diferenciando perfis (cliente e admin).
 
 ### Requisitos Não Funcionais
 
@@ -262,6 +310,8 @@
 - **RNF02 - Segurança**: As senhas devem ser armazenadas de forma hash (BCrypt) e a comunicação deve utilizar HTTPS em produção.
 
 - **RNF03 - Desempenho**: As consultas de extrato devem ser otimizadas com índices adequados.
+
+- **RNF04 - Configuração por Ambiente**: O sistema deve suportar perfis de configuração para desenvolvimento e produção.
 
 ### Casos de Uso Técnicos
 
@@ -277,9 +327,35 @@
   3. O sistema cria um novo registro na tabela `Cliente` e gera uma conta associada com saldo inicial zero.
   4. A API retorna `201 Created` com os dados do cliente criado.
 
-- **Fluxo de Exceção (CPF ou E-mail já cadastrado:)**: A API retorna `400 Bad Request` com a mensagem `"CPF já cadastrado"` ou `"E-mail já cadastrado"`.
+- **Fluxo de Exceção (CPF ou E-mail já cadastrado)**: A API retorna `400 Bad Request` com a mensagem `"CPF já cadastrado"` ou `"E-mail já cadastrado"`.
 
-#### Caso de Uso: UC02 - Realizar Depósito
+#### Caso de Uso: UC02 - Autenticar Usuário
+
+- **Ator**: Cliente ou Administrador.
+
+- **Pré-condição**: Usuário cadastrado.
+
+- **Fluxo Principal**:
+  1. O usuário informa e-mail e senha.
+  2. O backend valida as credenciais.
+  3. O sistema gera um token JWT.
+  4. A API retorna `200 OK` com token e identificação da conta.
+
+- **Fluxo de Exceção (Credenciais Inválidas)**: A API retorna `401 Unauthorized`.
+
+#### Caso de Uso: UC03 - Consultar Conta e Extrato
+
+- **Ator**: Cliente (autenticado).
+
+- **Pré-condição**: Cliente logado e conta ativa.
+
+- **Fluxo Principal**:
+  1. O cliente acessa os dados da conta.
+  2. O backend busca saldo, número e agência.
+  3. O cliente solicita o extrato com ou sem filtros de período.
+  4. O sistema retorna a lista de transações.
+
+#### Caso de Uso: UC04 - Realizar Depósito
 
 - **Ator**: Cliente (autenticado).
 
@@ -289,12 +365,12 @@
   1. O cliente informa o valor do depósito.
   2. O backend valida se o valor é positivo.
   3. O sistema atualiza o saldo da conta.
-  4. O sistema registra a transação na tabela Transacao.
-  5. A API retorna 200 OK com os detalhes da transação.
+  4. O sistema registra a transação na tabela `Transacao`.
+  5. A API retorna `200 OK` com os detalhes da transação.
 
-- **Fluxo de Exceção (Valor Inválido)**: A API retorna 400 Bad Request com a mensagem "Valor deve ser maior que zero".
+- **Fluxo de Exceção (Valor Inválido)**: A API retorna `400 Bad Request` com a mensagem `"Valor deve ser maior que zero"`.
 
-#### Caso de Uso: UC03 - Realizar Saque
+#### Caso de Uso: UC05 - Realizar Saque
 
 - **Ator**: Cliente (autenticado).
 
@@ -305,11 +381,31 @@
   2. O backend valida se o valor é positivo e menor ou igual ao saldo.
   3. O sistema atualiza o saldo da conta.
   4. O sistema registra a transação.
-  5. A API retorna 200 OK com os detalhes da transação.
+  5. A API retorna `200 OK` com os detalhes da transação.
 
-- **Fluxo de Exceção (Saldo Insuficiente)**: A API retorna 400 Bad Request com a mensagem "Saldo insuficiente".
+- **Fluxo de Exceção (Saldo Insuficiente)**: A API retorna `400 Bad Request` com a mensagem `"Saldo insuficiente"`.
 
-#### Caso de Uso: UC04 - Comprar Investimento
+#### Caso de Uso: UC06 - Listar Produtos de Investimento
+
+- **Ator**: Cliente (autenticado ou visitante, conforme regra de acesso).
+
+- **Pré-condição**: Nenhuma.
+
+- **Fluxo Principal**:
+  1. O sistema consulta os produtos disponíveis.
+  2. A API retorna a lista de produtos.
+
+#### Caso de Uso: UC07 - Listar Investimentos por Conta
+
+- **Ator**: Cliente (autenticado).
+
+- **Pré-condição**: Cliente logado e conta ativa.
+
+- **Fluxo Principal**:
+  1. O sistema consulta os investimentos vinculados à conta.
+  2. A API retorna a lista de investimentos da conta.
+
+#### Caso de Uso: UC08 - Comprar Investimento
 
 - **Ator**: Cliente (autenticado).
 
@@ -319,10 +415,10 @@
   1. O cliente seleciona o produto e informa o valor.
   2. O backend valida saldo suficiente e disponibilidade do produto.
   3. O sistema debita o valor da conta.
-  4. O sistema registra a aplicação em Investimento.
-  5. A API retorna 201 Created com os detalhes da aplicação.
+  4. O sistema registra a aplicação em `Investimento`.
+  5. A API retorna `201 Created` com os detalhes da aplicação.
 
-- **Fluxo de Exceção (Saldo Insuficiente)**: A API retorna 400 Bad Request com a mensagem "Saldo insuficiente para este investimento".
+- **Fluxo de Exceção (Saldo Insuficiente)**: A API retorna `400 Bad Request` com a mensagem `"Saldo insuficiente para este investimento"`.
 
 ### Organização do Backlog Técnico
 
@@ -330,12 +426,12 @@
 2. Implementar as entidades JPA e repositórios no backend.
 3. Desenvolver o serviço de cadastro de cliente com validações de CPF, e-mail e senha criptografada.
 4. Criar o endpoint `POST /api/v1/clientes` conforme o contrato definido.
-5. Desenvolver os serviços de validação de regras de negócio para depósito, saque e investimento.
-6. Criar os endpoints REST para as operações bancárias.
-7. Implementar autenticação com Spring Security e JWT.
-8. Implementar tratamento global de exceções com `@RestControllerAdvice`.
-9. Desenvolver componentes e serviços no Angular para cadastro, login e demais funcionalidades.
-10. Escrever testes unitários e de integração (`JUnit`, `Mockito`, `Jest`).
+5. Desenvolver os serviços de autenticação com Spring Security e JWT.
+6. Criar os endpoints REST para conta, extrato, depósito, saque e investimentos.
+7. Implementar tratamento global de exceções com `@RestControllerAdvice`.
+8. Desenvolver componentes e serviços no Angular para cadastro, login e demais funcionalidades.
+9. Escrever testes unitários e de integração (`JUnit`, `Mockito`, `Jest`).
+10. Revisar documentação dos contratos da API para manter alinhamento com as rotas implementadas.
 
 ---
 
@@ -390,7 +486,6 @@
 - Uma `Conta` pode ter várias `Transacoes`.
 - Uma `Conta` pode ter vários `Investimentos`.
 - Um `ProdutoInvestimento` pode estar associado a vários `Investimentos`.
-
 
 ## Diagramas de classes e entidade-relacionamento
 
@@ -542,7 +637,7 @@ erDiagram
 
 ## Frontend implementado
 
-O frontend foi estruturado em **Angular 15 + TypeScript**, com navegação por rotas e telas separadas por domínio funcional. A interface cobre o fluxo principal do cliente, desde o acesso inicial até as operações bancárias e investimentos.
+O frontend foi estruturado em **Angular 15 + TypeScript**, com navegação por rotas e telas separadas por domínio funcional. A interface cobre o fluxo principal do cliente, desde o acesso inicial até as operações financeiras e de investimento.
 
 ### Principais funcionalidades disponíveis
 
@@ -565,6 +660,7 @@ O frontend foi estruturado em **Angular 15 + TypeScript**, com navegação por r
 - **Investimentos**
   - Tela de **listagem de produtos de investimento**.
   - Tela de **compra de investimento** com preenchimento automático do valor mínimo do produto.
+  - Consulta dos investimentos vinculados à conta.
 
 ### Rotas da aplicação
 
@@ -608,8 +704,8 @@ O frontend consome a API REST por meio de serviços Angular dedicados, seguindo 
 
 - `AuthService` para autenticação.
 - `ClienteService` para cadastro de cliente.
-- `ContaService` para depósito, saque e extrato.
-- `InvestimentoService` para produtos e compra de investimentos.
+- `ContaService` para depósito, saque, extrato e consulta de conta.
+- `InvestimentoService` para produtos, investimentos da conta e compra de investimentos.
 - `TokenService` para persistência local de sessão.
 
 ### Observações de implementação
